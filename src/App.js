@@ -1,31 +1,27 @@
+import React from 'react';
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
-import Navbar from "./componentes/Navbar";
 import ListaRecetas from "./paginas/Recetas";
-import Login from "./paginas/Login";
 import VerReceta from "./paginas/verReceta";
 import EditarReceta from "./paginas/EditarReceta";
 import Invent from "./paginas/Inventario";
 import Dashboard from "./paginas/Dashboard";
+import Login from "./paginas/Login"; // Importa Login aquí
 
 function App() {
   return (
     <div className="App">
-      <>
-        <Router>
-          <Navbar />
-          <div>
-            <Routes>
-              <Route path="/" element={<Login />} />
-              <Route path="/dashboard" element={<Dashboard />} />
+      <Router>
+        <Routes>
+          <Route path="/" element={<Login />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<Login />} />
 
-              <Route path="/listaRecetas" element={<ListaRecetas />} />
-              <Route path="/verReceta" element={<VerReceta/>} /> 
-              <Route path="/editarReceta" element={<EditarReceta />} />
-              <Route path="/inventario" element={<Invent />} />
-            </Routes>
-          </div>
-        </Router>
-      </>
+          <Route path="/listaRecetas" element={<ListaRecetas />} />
+          <Route path="/verReceta/:id" element={<VerReceta/>} /> 
+          <Route path="/editarReceta/:id" element={<EditarReceta />} />
+          <Route path="/inventario" element={<Invent />} />
+        </Routes>
+      </Router>
     </div>
   );
 }

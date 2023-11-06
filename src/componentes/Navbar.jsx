@@ -1,7 +1,8 @@
 import React from "react";
-import "../App.css"; // Asegúrate de tener un archivo de estilos CSS para tus personalizaciones
+import { Link } from 'react-router-dom';
+import "../App.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { FaUser } from "react-icons/fa"; // Importa los iconos de búsqueda y usuario FaSearch
+import { BsSpeedometer } from "react-icons/bs";
 
 function Navbar() {
   return (
@@ -63,8 +64,9 @@ function Navbar() {
         >
           Buscar
         </button>
-        <FaUser size={32} color="white" style={{ marginRight: "2cm" }} />{" "}
-        {/* Icono de usuario */}
+        <Link to= '/dashboard'>
+        <BsSpeedometer size={32} color="white" style={{ marginRight: "2cm" }} />
+        </Link>
       </div>
     </nav>
   );

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import logoImage from '../img/queso.png';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap/dist/js/bootstrap.bundle.min.js';
@@ -6,12 +7,29 @@ import 'bootstrap/dist/js/bootstrap.bundle.min.js';
 function Login() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [loggedIn, setLoggedIn] = useState(false);
+    const [accessDenied, setAccessDenied] = useState(false);
+    const navigate = useNavigate();
 
-    const handleLogin = () => {
-        // Lógica de inicio de sesión aquí.
-        if (email === 'usuario@example.com' && password === 'contrasena') {
-            setLoggedIn(true);
+    const allowedUsers = [
+        { email: 'jonny@quesos.com', password: '123' },
+        { email: 'miau@quesos.com', password: '123' },
+        { email: 'adan@quesos.com', password: '123' },
+        { email: 'gopar@quesos.com', password: '123' },
+    ];
+
+    const handleLogin = (e) => {
+        e.preventDefault();
+
+        const isValidUser = allowedUsers.some(user => user.email === email && user.password === password);
+
+        if (isValidUser) {
+            navigate('/dashboard');
+        } else {
+            setAccessDenied(true);
+
+            setTimeout(() => {
+                setAccessDenied(false);
+            }, 2000);
         }
     };
 
@@ -22,7 +40,7 @@ function Login() {
                     <img src={logoImage} alt="Logo del proyecto" className="w-100 h-100 mb-3" />
                 </div>
                 <h1 className="mb-3">¡BIENVENIDO!</h1>
-                <form>
+                <form onSubmit={handleLogin}>
                     <input
                         type="email"
                         placeholder="Usuario"
@@ -37,13 +55,12 @@ function Login() {
                         onChange={(e) => setPassword(e.target.value)}
                         className="form-control mb-3"
                     />
-                    {loggedIn ? (
-                        <p className="text-success mb-4">¡Inicio de sesión exitoso!</p>
-                    ) : (
-                        <button onClick={handleLogin} className="btn btn-primary btn-block">
-                            Iniciar sesión
-                        </button>
+                    {accessDenied && (
+                        <p className="text-danger mb-4">Acceso denegado. Credenciales incorrectas.</p>
                     )}
+                    <button type="submit" className="btn btn-primary btn-block">
+                        Iniciar sesión
+                    </button>
                 </form>
             </div>
         </div>

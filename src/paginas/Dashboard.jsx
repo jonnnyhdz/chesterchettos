@@ -2,6 +2,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faChartBar, faClipboardList, faCube, faWarehouse, faSun } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   return (
@@ -16,21 +17,27 @@ const Dashboard = () => {
             <FontAwesomeIcon icon={faChartBar} className="mr-2" />
             Dashboards
           </div>
+          <Link to = '/listaRecetas'>
           <div className="mb-5">
             <FontAwesomeIcon icon={faClipboardList} className="mr-2" />
             Recetas
           </div>
+          </Link>
           <div className="mb-5">
             <FontAwesomeIcon icon={faCube} className="mr-2" />
             Lotes
           </div>
+          <Link to = '/inventario'>
           <div className="mb-5">
             <FontAwesomeIcon icon={faWarehouse} className="mr-2" />
             Inventario
           </div>
+          </Link>
+          <Link to = '/login'>
           <div style={{position: 'absolute', bottom: '50px', left: '15px', right: '15px'}}> {/* Ajuste en la posición del botón */}
             <button className="btn btn-block" style={{backgroundColor: '#E5F3FF', color: 'black'}}>Cerrar sesión</button>
           </div>
+          </Link>
         </div>
         <div className="col-9 p-3">
           <div className="row">

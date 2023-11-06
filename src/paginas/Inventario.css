@@ -1,6 +1,6 @@
 .custom-table {
     border: 2px solid #000;
-    margin: 0 auto;
+    margin:0 auto;
     border-collapse: collapse;
     height: 80vh;
   }
@@ -52,7 +52,7 @@
   }
 
   .custom-table td {
-    font-size: 14px;
+    font-size: 20px;
   }
 
   .add-button-right {
