@@ -1,0 +1,62 @@
+.custom-table {
+    border: 2px solid #000;
+    margin: 0 auto;
+    border-collapse: collapse;
+    height: 80vh;
+  }
+
+  .custom-table thead {
+    background-color: yellow;
+  }
+
+  .custom-table th {
+    border: 2px solid #000;
+    padding: 8px;
+    text-align: center;
+    background-color: white;
+    color: black;
+  }
+
+  .custom-table tbody td {
+    border: none;
+    text-align: center;
+    background-color: white;
+    color: black;
+  }
+
+  .custom-table tfoot {
+    border-top: 2px solid #000;
+  }
+
+.bg-yellow {
+    background-color: yellow;
+  }
+  .form-input {
+    width: 100%;
+    padding: 5px;
+    margin: 5px;
+  }
+
+  .form-button {
+    width: 100%;
+    padding: 5px;
+    margin: 5px;
+    background-color: #007BFF;
+    color: white;
+    border: none;
+    cursor: pointer;
+  }
+
+  .form-button:hover {
+    background-color: #0056b3;
+  }
+
+  .custom-table td {
+    font-size: 14px;
+  }
+
+  .add-button-right {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+  }
