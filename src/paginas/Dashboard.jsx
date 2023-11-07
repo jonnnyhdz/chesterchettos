@@ -1,6 +1,6 @@
 import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faChartBar, faClipboardList, faCube, faWarehouse, faSun } from '@fortawesome/free-solid-svg-icons';
+import { faChartBar, faClipboardList, faCube, faWarehouse } from '@fortawesome/free-solid-svg-icons';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from 'react-router-dom';
 
@@ -10,23 +10,25 @@ const Dashboard = () => {
       <div className="row">
         <div className="col-3 p-3" style={{backgroundColor: '#FCDB30', height: '100vh', position: 'relative'}}> 
           <div className="d-flex align-items-center mb-4">
-            <FontAwesomeIcon icon={faSun} color="white" size="lg" className="mr-2" />
-            <span className="text-white">light</span>
+            <span className="text-white"> QUESOS ARTESANALES</span>
           </div>
           <div className="mb-5"> 
             <FontAwesomeIcon icon={faChartBar} className="mr-2" />
-            Dashboards
+            Dashboard
           </div>
+
           <Link to = '/listaRecetas'>
           <div className="mb-5">
             <FontAwesomeIcon icon={faClipboardList} className="mr-2" />
             Recetas
           </div>
           </Link>
+          <Link to = '/lotes'>
           <div className="mb-5">
             <FontAwesomeIcon icon={faCube} className="mr-2" />
             Lotes
           </div>
+          </Link>
           <Link to = '/inventario'>
           <div className="mb-5">
             <FontAwesomeIcon icon={faWarehouse} className="mr-2" />
@@ -46,7 +48,7 @@ const Dashboard = () => {
                 <div className="card-body">
                   <h5 className="card-title">Ingresos</h5>
                   <h2>$ 3,503.26</h2>
-                  <p className="card-text">+6.50% since last month</p>
+                  <p className="card-text">+6.50% desde el mes pasado</p>
                 </div>
               </div>
             </div>
@@ -55,7 +57,7 @@ const Dashboard = () => {
                 <div className="card-body">
                   <h5 className="card-title">Clientes</h5>
                   <h2>34</h2>
-                  <p className="card-text">-2.86% since last month</p>
+                  <p className="card-text">-2.86% desde el mes pasado</p>
                 </div>
               </div>
             </div>
@@ -64,7 +66,7 @@ const Dashboard = () => {
                 <div className="card-body">
                   <h5 className="card-title">Recetas</h5>
                   <h2>683</h2>
-                  <p className="card-text">+1.70% since last month</p>
+                  <p className="card-text">+1.70% desde el mes pasado</p>
                 </div>
               </div>
             </div>

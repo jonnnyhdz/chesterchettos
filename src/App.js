@@ -6,6 +6,7 @@ import EditarReceta from "./paginas/EditarReceta";
 import Invent from "./paginas/Inventario";
 import Dashboard from "./paginas/Dashboard";
 import Login from "./paginas/Login"; // Importa Login aquí
+import Lotes from './paginas/Lotes';
 
 function App() {
   return (
@@ -19,7 +20,9 @@ function App() {
           <Route path="/listaRecetas" element={<ListaRecetas />} />
           <Route path="/verReceta/:id" element={<VerReceta/>} /> 
           <Route path="/editarReceta/:id" element={<EditarReceta />} />
-          <Route path="/inventario" element={<Invent />} />
+          <Route path="/inventario" element={<Invent/>} />
+          <Route path="/lotes" element={<Lotes/>} />
+
         </Routes>
       </Router>
     </div>

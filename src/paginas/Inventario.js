@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Modal, Button } from 'react-bootstrap';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../componentes/Navbar';
 
 import './Inventario.css'
@@ -24,6 +26,11 @@ function Invent() {
     fechaCaducidad: '',
     ediciones: '',
   });
+  const iconStyle = {
+    cursor: 'pointer',
+    margin: '0 5px',
+  };
+
   const [showAddModal, setShowAddModal] = useState(false);
 
   useEffect(() => {
@@ -157,19 +164,14 @@ function Invent() {
               {data.map((item, index) => (
                 <tr key={index}>
                   <td>{item.ingredientes}</td>
-                  <td>{item.stockMinimo}</td>
-                  <td>{item.cantidadActual}</td>
+                  <td>{item.stock_minimo}</td>
+                  <td>{item.cantidad_actual}</td>
                   <td>{item.calidad}</td>
-                  <td>{item.fechaCaducidad}</td>
-                  <td>{item.ediciones}</td>
+                  <td>{item.fecha_caducidad.substring(0, 10)}</td>
                   <td>
-                    <Button variant="primary" onClick={() => handleEditItem(index)}>
-                      Editar
-                    </Button>
-                    <Button variant="danger" onClick={() => handleDeleteItem(index)}>
-                      Borrar
-                    </Button>
-                  </td>
+                  <FontAwesomeIcon icon={faEdit} style={{ ...iconStyle, color: '#007bff' }} onClick={() => handleEditItem(index)} />
+                  <FontAwesomeIcon icon={faTrash} style={{ ...iconStyle, color: '#dc3545' }} onClick={() => handleDeleteItem(index)} />
+                  </td>               
                 </tr>
               ))}
             </tbody>
@@ -299,7 +301,6 @@ function Invent() {
               onChange={(e) =>
                 setEditItemData({ ...editItemData, ediciones: e.target.value })
               }
-              placeholder="Ediciones"
             />
           </Modal.Body>
           <Modal.Footer>
