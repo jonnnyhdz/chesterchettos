@@ -37,11 +37,9 @@ const EditarReceta = () => {
 
   const handleSave = () => {
     if (modalContent === 'ingredient') {
-      const newIngredients = receta.ingredientes + '\n' + inputValue;
-      setReceta((prevReceta) => ({ ...prevReceta, ingredientes: newIngredients }));
+      setReceta((prevReceta) => ({ ...prevReceta, ingredientes: inputValue }));
     } else {
-      const newProcedure = receta.preparacion + '\n' + inputValue;
-      setReceta((prevReceta) => ({ ...prevReceta, preparacion: newProcedure }));
+      setReceta((prevReceta) => ({ ...prevReceta, preparacion: inputValue }));
     }
 
     // Realiza una solicitud para actualizar la receta en el servidor
@@ -51,8 +49,8 @@ const EditarReceta = () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ingredientes: receta.ingredientes,
-        preparacion: receta.preparacion,
+        ingredientes: modalContent === 'ingredient' ? inputValue : receta.ingredientes,
+        preparacion: modalContent === 'procedure' ? inputValue : receta.preparacion,
       }),
     })
       .then((response) => response.json())

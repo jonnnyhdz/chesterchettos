@@ -65,7 +65,7 @@ const Dashboard = () => {
               <div className="card bg-primary text-white mb-4">
                 <div className="card-body">
                   <h5 className="card-title">Recetas</h5>
-                  <h2>683</h2>
+                  <h2>10</h2>
                   <p className="card-text">+1.70% desde el mes pasado</p>
                 </div>
               </div>

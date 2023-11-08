@@ -4,31 +4,44 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import Navbar from '../componentes/Navbar';
 
-import './Inventario.css'
-
 function Invent() {
+  
   const [data, setData] = useState([]);
   const [newItem, setNewItem] = useState({
     ingredientes: '',
-    stockMinimo: '',
-    cantidadActual: '',
+    stock_minimo: '',
+    cantidad_actual: '',
     calidad: 'Excelente',
-    fechaCaducidad: '',
+    fecha_caducidad: '',
     ediciones: '',
   });
   const [editingIndex, setEditingIndex] = useState(null);
   const [showEditModal, setShowEditModal] = useState(false);
   const [editItemData, setEditItemData] = useState({
     ingredientes: '',
-    stockMinimo: '',
-    cantidadActual: '',
+    stock_minimo: '',
+    cantidad_actual: '',
     calidad: 'Excelente',
-    fechaCaducidad: '',
+    fecha_caducidad: '',
     ediciones: '',
   });
+
   const iconStyle = {
     cursor: 'pointer',
     margin: '0 5px',
+  };
+  const tableStyle = {
+    border: '2px solid black',
+  };
+  const addButtonStyle = {
+    background: '#f78c29',
+    border: '1px solid #f78c29',
+    borderRadius: '8px',
+    cursor: 'pointer',
+    fontSize: '1rem',
+    padding: '5px 10px',
+    color: 'white',
+    marginBottom: '20px',
   };
 
   const [showAddModal, setShowAddModal] = useState(false);
@@ -43,11 +56,12 @@ function Invent() {
         console.error('Error al obtener datos del inventario:', error);
       });
   }, []);
+  
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
 
-    if (name === 'stockMinimo' || name === 'cantidadActual') {
+    if (name === 'stock_minimo' || name === 'cantidad_actual') {
       if (/^\d+$/.test(value)) {
         setNewItem({
           ...newItem,
@@ -63,8 +77,8 @@ function Invent() {
   };
 
   const handleAddItem = () => {
-    fetch('http://localhost:8082/actualizarInventario', {
-      method: 'PUT',
+    fetch('http://localhost:8082/agregarInventario', {
+      method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
@@ -73,15 +87,19 @@ function Invent() {
       .then((response) => response.json())
       .then((data) => {
         if (data.mensaje) {
-          setData([...data, newItem]);
+          setData((prevData) => {
+            return [...prevData, newItem];
+          });          
+  
           setNewItem({
             ingredientes: '',
-            stockMinimo: '',
-            cantidadActual: '',
+            stock_minimo: '',
+            cantidad_actual: '',
             calidad: 'Excelente',
-            fechaCaducidad: '',
+            fecha_caducidad: '',
             ediciones: '',
           });
+  
           setShowAddModal(false);
         } else {
           console.error('Error al agregar elemento al inventario');
@@ -97,14 +115,26 @@ function Invent() {
 
   const handleSaveItem = () => {
     const updatedData = [...data];
-    updatedData[editingIndex] = editItemData;
+    const originalItem = data[editingIndex];
 
-    fetch(`http://localhost:8082/actualizarInventario/${data[editingIndex].id}`, {
+    const updatedItem = {
+      ...originalItem,
+      ingredientes: editItemData.ingredientes,
+      stock_minimo: editItemData.stock_minimo,
+      cantidad_actual: editItemData.cantidad_actual,
+      calidad: editItemData.calidad,
+      fecha_caducidad: editItemData.fecha_caducidad,
+      ediciones: editItemData.ediciones,
+    };
+
+    updatedData[editingIndex] = updatedItem;
+
+    fetch(`http://localhost:8082/actualizarInventario/${originalItem.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify(editItemData),
+      body: JSON.stringify(updatedItem),
     })
       .then((response) => response.json())
       .then((response) => {
@@ -120,17 +150,22 @@ function Invent() {
 
   const handleDeleteItem = (index) => {
     const inventarioId = data[index].id;
-    fetch(`http://localhost:8082/actualizarInventario/${inventarioId}`, {
+  
+    fetch(`http://localhost:8082/eliminarInventario/${inventarioId}`, {
       method: 'DELETE',
     })
       .then((response) => response.json())
       .then((response) => {
         if (response.mensaje) {
+          // Elimina el elemento del inventario localmente
           const filteredData = data.filter((item, i) => i !== index);
           setData(filteredData);
         } else {
           console.error('Error al borrar elemento del inventario');
         }
+      })
+      .catch((error) => {
+        console.error('Error al borrar elemento del inventario:', error);
       });
   };
 
@@ -139,16 +174,11 @@ function Invent() {
       <Navbar />
       <div className="container-fluid mt-4">
         <div className="table-responsive">
-          <table className="custom-table">
+          <table className="table table-bordered table-striped custom-table" style={tableStyle}>
             <thead className="thead-dark">
               <tr>
                 <th colSpan="6" className="text-center bg-warning">
                   Lista de Inventario
-                </th>
-                <th className="text-center bg-warning">
-                  <button className="add-button" onClick={() => setShowAddModal(true)}>
-                    +
-                  </button>
                 </th>
               </tr>
               <tr>
@@ -157,7 +187,7 @@ function Invent() {
                 <th>Cantidad Actual</th>
                 <th>Calidad</th>
                 <th>Fecha de Caducidad</th>
-                <th>Ediciones</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -167,22 +197,21 @@ function Invent() {
                   <td>{item.stock_minimo}</td>
                   <td>{item.cantidad_actual}</td>
                   <td>{item.calidad}</td>
-                  <td>{item.fecha_caducidad.substring(0, 10)}</td>
+                  <td>{item.fecha_caducidad ? item.fecha_caducidad.substring(0, 10) : ''}</td>
                   <td>
-                  <FontAwesomeIcon icon={faEdit} style={{ ...iconStyle, color: '#007bff' }} onClick={() => handleEditItem(index)} />
-                  <FontAwesomeIcon icon={faTrash} style={{ ...iconStyle, color: '#dc3545' }} onClick={() => handleDeleteItem(index)} />
-                  </td>               
+                    <FontAwesomeIcon icon={faEdit} style={{ ...iconStyle, color: '#007bff' }} onClick={() => handleEditItem(index)} />
+                    <FontAwesomeIcon icon={faTrash} style={{ ...iconStyle, color: '#dc3545' }} onClick={() => handleDeleteItem(index)} />
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
-
-        <div className="form">
-          {/* ... Formulario de agregar receta existente ... */}
+        <div className="text-center">
+          <button style={addButtonStyle} onClick={() => setShowAddModal(true)}>
+            Agregar
+          </button>
         </div>
-
-        {/* Modal de agregar receta */}
         <Modal show={showAddModal} onHide={() => setShowAddModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Agregar Elemento al Inventario</Modal.Title>
@@ -198,15 +227,15 @@ function Invent() {
               />
               <input
                 type="text"
-                name="stockMinimo"
-                value={newItem.stockMinimo}
+                name="stock_minimo"
+                value={newItem.stock_minimo}
                 onChange={handleInputChange}
                 placeholder="Stock Mínimo (Solo números)"
               />
               <input
                 type="text"
-                name="cantidadActual"
-                value={newItem.cantidadActual}
+                name="cantidad_actual"
+                value={newItem.cantidad_actual}
                 onChange={handleInputChange}
                 placeholder="Cantidad Actual (Solo números)"
               />
@@ -222,16 +251,9 @@ function Invent() {
               </select>
               <input
                 type="date"
-                name="fechaCaducidad"
-                value={newItem.fechaCaducidad}
+                name="fecha_caducidad"
+                value={newItem.fecha_caducidad}
                 onChange={handleInputChange}
-              />
-              <input
-                type="text"
-                name="ediciones"
-                value={newItem.ediciones}
-                onChange={handleInputChange}
-                placeholder="Ediciones"
               />
             </div>
           </Modal.Body>
@@ -244,7 +266,6 @@ function Invent() {
             </Button>
           </Modal.Footer>
         </Modal>
-
         <Modal show={showEditModal} onHide={() => setShowEditModal(false)}>
           <Modal.Header closeButton>
             <Modal.Title>Editar Elemento del Inventario</Modal.Title>
@@ -260,18 +281,18 @@ function Invent() {
             />
             <input
               type="text"
-              name="stockMinimo"
-              value={editItemData.stockMinimo}
+              name="stock_minimo"
+              value={editItemData.stock_minimo}
               onChange={(e) =>
-                setEditItemData({ ...editItemData, stockMinimo: e.target.value })
+                setEditItemData({ ...editItemData, stock_minimo: e.target.value })
               }
             />
             <input
               type="text"
-              name="cantidadActual"
-              value={editItemData.cantidadActual}
+              name="cantidad_actual"
+              value={editItemData.cantidad_actual}
               onChange={(e) =>
-                setEditItemData({ ...editItemData, cantidadActual: e.target.value })
+                setEditItemData({ ...editItemData, cantidad_actual: e.target.value })
               }
             />
             <select
@@ -288,18 +309,10 @@ function Invent() {
             </select>
             <input
               type="date"
-              name="fechaCaducidad"
-              value={editItemData.fechaCaducidad}
+              name="fecha_caducidad"
+              value={editItemData.fecha_caducidad}
               onChange={(e) =>
-                setEditItemData({ ...editItemData, fechaCaducidad: e.target.value })
-              }
-            />
-            <input
-              type="text"
-              name="ediciones"
-              value={editItemData.ediciones}
-              onChange={(e) =>
-                setEditItemData({ ...editItemData, ediciones: e.target.value })
+                setEditItemData({ ...editItemData, fecha_caducidad: e.target.value })
               }
             />
           </Modal.Body>

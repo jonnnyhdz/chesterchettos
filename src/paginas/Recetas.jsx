@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { BsEye, BsPencil } from 'react-icons/bs';
+import { BsEye, BsPencil, BsTrash } from 'react-icons/bs';
 import Navbar from '../componentes/Navbar';
 import { Link } from 'react-router-dom';
 import { Modal, Form, Button } from 'react-bootstrap';
-
 
 const ListaRecetas = () => {
   const nombreQuesoCellStyle = {
@@ -44,66 +43,90 @@ const ListaRecetas = () => {
 
   const [showAddModal, setShowAddModal] = useState(false);
 
-const [newRecetaData, setNewRecetaData] = useState({
-  nombre_queso: '',
-  nombre_receta: '',
-  ingredientes: '',
-  preparacion: '',
-});
-const handleShowAddModal = () => {
-  setShowAddModal(true);
-};
-
-const handleCloseAddModal = () => {
-  setShowAddModal(false);
-};
-
-const handleModalInputChange = (e) => {
-  const { name, value } = e.target;
-  setNewRecetaData({
-    ...newRecetaData,
-    [name]: value,
+  const [newRecetaData, setNewRecetaData] = useState({
+    nombre_queso: '',
+    nombre_receta: '',
+    ingredientes: '',
+    preparacion: '',
   });
-};
 
-const handleAddReceta = () => {
-  // Envía los datos de la nueva receta a la base de datos
-  fetch('http://localhost:8082/agregarReceta', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(newRecetaData),
-  })
-    .then((response) => response.json())
-    .then((data) => {
-      if (data.mensaje === 'Receta agregada exitosamente') {
-        // Cierra el modal
-        handleCloseAddModal();
+  const handleShowAddModal = () => {
+    setShowAddModal(true);
+  };
 
-        // Limpia los campos del formulario
-        setNewRecetaData({
-          nombre_queso: '',
-          nombre_receta: '',
-          ingredientes: '',
-          preparacion: '',
-        });
+  const handleCloseAddModal = () => {
+    setShowAddModal(false);
+  };
 
-        // Refresca la lista de recetas
-        fetch('http://localhost:8082/obtenerRecetas')
-          .then((response) => response.json())
-          .then((data) => {
-            setRecetas(data.recetas);
-          })
-          .catch((error) => {
-            console.error('Error al obtener las recetas:', error);
-          });
-      } else {
-        console.error('Error al agregar receta:', data.mensaje);
-      }
+  const handleModalInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewRecetaData({
+      ...newRecetaData,
+      [name]: value,
     });
-};
+  };
 
+  const handleAddReceta = () => {
+    // Envía los datos de la nueva receta a la base de datos
+    fetch('http://localhost:8082/agregarReceta', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newRecetaData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.mensaje === 'Receta agregada exitosamente') {
+          // Cierra el modal
+          handleCloseAddModal();
+
+          // Limpia los campos del formulario
+          setNewRecetaData({
+            nombre_queso: '',
+            nombre_receta: '',
+            ingredientes: '',
+            preparacion: '',
+          });
+
+          // Refresca la lista de recetas
+          fetch('http://localhost:8082/obtenerRecetas')
+            .then((response) => response.json())
+            .then((data) => {
+              setRecetas(data.recetas);
+            })
+            .catch((error) => {
+              console.error('Error al obtener las recetas:', error);
+            });
+        } else {
+          console.error('Error al agregar receta:', data.mensaje);
+        }
+      });
+  };
+
+  const handleDeleteReceta = (recetaId) => {
+    const confirmarEliminacion = window.confirm('¿Seguro que deseas eliminar esta receta?');
+
+    if (confirmarEliminacion) {
+      // Envía una solicitud para eliminar la receta de la base de datos
+      fetch(`http://localhost:8082/eliminarReceta/${recetaId}`, {
+        method: 'DELETE',
+      })
+        .then((response) => response.json())
+        .then((data) => {
+          if (data.mensaje === 'Receta eliminada exitosamente') {
+            // Actualiza la lista de recetas después de eliminar
+            const updatedRecetas = recetas.filter((receta) => receta.id !== recetaId);
+            setRecetas(updatedRecetas);
+          } else {
+            console.error('Error al eliminar la receta:', data.mensaje);
+          }
+        })
+        .catch((error) => {
+          console.error('Error al eliminar la receta:', error);
+        });
+    }
+  };
 
   const [recetas, setRecetas] = useState([]);
 
@@ -147,72 +170,77 @@ const handleAddReceta = () => {
                     <BsEye size={20} style={{ cursor: 'pointer', marginRight: '10px', color: 'blue' }} />
                   </Link>
                   <Link to={`/editarReceta/${receta.id}`}>
-                    <BsPencil size={20} style={{ cursor: 'pointer', color: 'green' }} />
+                    <BsPencil size={20} style={{ cursor: 'pointer', marginRight: '10px', color: 'green' }} />
                   </Link>
+                  <BsTrash
+                    size={20}
+                    style={{ cursor: 'pointer', color: 'red' }}
+                    onClick={() => handleDeleteReceta(receta.id)}
+                  />
                 </td>
               </tr>
             ))}
           </tbody>
         </table>
+        <button onClick={handleShowAddModal} style={addButtonStyle}>
+          Agregar Receta
+        </button>
         <Modal show={showAddModal} onHide={handleCloseAddModal}>
-  <Modal.Header closeButton>
-    <Modal.Title>Agregar Nueva Receta</Modal.Title>
-  </Modal.Header>
-  <Modal.Body>
-    <Form>
-      <Form.Group controlId="nombre_queso">
-        <Form.Label>Nombre del Queso</Form.Label>
-        <Form.Control
-          type="text"
-          name="nombre_queso"
-          value={newRecetaData.nombre_queso}
-          onChange={handleModalInputChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="nombre_receta">
-        <Form.Label>Nombre de la Receta</Form.Label>
-        <Form.Control
-          type="text"
-          name="nombre_receta"
-          value={newRecetaData.nombre_receta}
-          onChange={handleModalInputChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="ingredientes">
-        <Form.Label>Ingredientes</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          name="ingredientes"
-          value={newRecetaData.ingredientes}
-          onChange={handleModalInputChange}
-        />
-      </Form.Group>
-      <Form.Group controlId="preparacion">
-        <Form.Label>Preparación</Form.Label>
-        <Form.Control
-          as="textarea"
-          rows={3}
-          name="preparacion"
-          value={newRecetaData.preparacion}
-          onChange={handleModalInputChange}
-        />
-      </Form.Group>
-    </Form>
-  </Modal.Body>
-  <Modal.Footer>
-    <Button variant="secondary" onClick={handleCloseAddModal}>
-      Cancelar
-    </Button>
-    <Button variant="primary" onClick={handleAddReceta}>
-      Agregar
-    </Button>
-  </Modal.Footer>
-</Modal>
-
-        <button style={addButtonStyle} onClick={handleShowAddModal}>Agregar Receta
-        </button>      
-        </div>
+          <Modal.Header closeButton>
+            <Modal.Title>Agregar Nueva Receta</Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <Form>
+              <Form.Group controlId="nombre_queso">
+                <Form.Label>Nombre del Queso</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="nombre_queso"
+                  value={newRecetaData.nombre_queso}
+                  onChange={handleModalInputChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="nombre_receta">
+                <Form.Label>Nombre de la Receta</Form.Label>
+                <Form.Control
+                  type="text"
+                  name="nombre_receta"
+                  value={newRecetaData.nombre_receta}
+                  onChange={handleModalInputChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="ingredientes">
+                <Form.Label>Ingredientes</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="ingredientes"
+                  value={newRecetaData.ingredientes}
+                  onChange={handleModalInputChange}
+                />
+              </Form.Group>
+              <Form.Group controlId="preparacion">
+                <Form.Label>Preparación</Form.Label>
+                <Form.Control
+                  as="textarea"
+                  rows={3}
+                  name="preparacion"
+                  value={newRecetaData.preparacion}
+                  onChange={handleModalInputChange}
+                />
+              </Form.Group>
+            </Form>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={handleCloseAddModal}>
+              Cancelar
+            </Button>
+            <Button variant="primary" onClick={handleAddReceta}>
+              Agregar
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </div>
     </div>
   );
 };

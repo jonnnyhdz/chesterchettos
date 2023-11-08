@@ -15,6 +15,7 @@ function Login() {
         { email: 'miau@quesos.com', password: '123' },
         { email: 'adan@quesos.com', password: '123' },
         { email: 'gopar@quesos.com', password: '123' },
+        { email: 'richi@quesos.com', password: '123' },
     ];
 
     const handleLogin = (e) => {
